@@ -1,0 +1,120 @@
+.landing-page {
+  position: relative;
+  background: #05050a;
+  color: #fff;
+  margin: -1px 0 0;
+}
+
+.landing-fixed-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at center, #171233 0%, #05050a 70%);
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.space-scene,
+.space-scene canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.landing-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(2, 2, 6, 0.75) 100%);
+}
+
+.landing-scroll {
+  position: relative;
+  z-index: 2;
+}
+
+.landing-section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 24px;
+  opacity: 0;
+  transition: opacity 0.1s linear;
+}
+
+.landing-eyebrow {
+  color: #ffd9a0;
+  letter-spacing: 0.3em;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+
+.landing-section h1,
+.landing-section h2 {
+  font-family: var(--serif);
+  font-size: clamp(28px, 5vw, 50px);
+  color: #fff;
+  line-height: 1.3;
+  text-shadow: 0 0 40px rgba(255, 220, 160, 0.35);
+}
+
+.landing-section p {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 16px;
+  max-width: 480px;
+  line-height: 1.6;
+}
+
+.landing-scroll-cue {
+  margin-top: 48px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.5);
+  animation: landing-bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes landing-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}
+
+.landing-cta {
+  margin-top: 30px;
+  display: flex;
+  gap: 14px;
+}
+
+.landing-cta-primary {
+  padding: 14px 26px;
+  border-radius: 999px;
+  background: #ffd9a0;
+  color: #1c1108;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.landing-cta-secondary {
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+}

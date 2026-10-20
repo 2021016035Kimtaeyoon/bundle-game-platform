@@ -1,0 +1,122 @@
+:root {
+  --bg: #f6f4ee;
+  --surface: #ffffff;
+  --surface-sunken: #efeee5;
+  --surface-tint: #fbf9f2;
+  --border: #e6e2d6;
+  --border-strong: #d6d0bf;
+
+  --ink: #1a1912;
+  --ink-dim: #6d6a5c;
+  --ink-faint: #9c9884;
+
+  --mint: #0c7d5f;
+  --mint-deep: #085943;
+  --mint-soft: #dcf1e7;
+  --coral: #db5a2e;
+  --coral-deep: #b7431f;
+  --coral-soft: #fae3d5;
+  --gold: #ad7d16;
+  --gold-soft: #f3ecd6;
+  --plum: #5b4b8a;
+  --plum-soft: #e8e3f5;
+  --danger: #c23b3b;
+
+  --stage-bg: #14131a;
+  --stage-line: #2c2d33;
+
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --radius-sm: 9px;
+
+  --shadow-xs: 0 1px 2px rgba(26, 25, 18, 0.05);
+  --shadow-card: 0 1px 2px rgba(26, 25, 18, 0.04), 0 10px 24px -6px rgba(26, 25, 18, 0.1);
+  --shadow-lift: 0 4px 10px rgba(26, 25, 18, 0.06), 0 20px 40px -12px rgba(26, 25, 18, 0.22);
+  --shadow-button: 0 1px 2px rgba(26, 25, 18, 0.08), 0 6px 16px -4px rgba(12, 125, 95, 0.35);
+
+  --grain-opacity: 0.035;
+
+  --serif: 'Fraunces', Georgia, 'Noto Serif KR', serif;
+  --sans: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Malgun Gothic', sans-serif;
+
+  font: 15px/1.55 var(--sans);
+  color-scheme: light;
+  color: var(--ink);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background:
+    radial-gradient(1200px 600px at 8% -10%, rgba(219, 90, 46, 0.07), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(12, 125, 95, 0.08), transparent 55%), var(--bg);
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  color: var(--ink-dim);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--mint-soft);
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+  border: 3px solid var(--bg);
+}

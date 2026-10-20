@@ -1,0 +1,41 @@
+{
+  "name": "bundle-game-platform",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/api & npm run dev --workspace=apps/web",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build": "npm run build --workspace=packages/shared-types && npm run build --workspace=apps/api && npm run build --workspace=apps/web",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prisma:generate": "npm run generate --workspace=packages/database",
+    "prisma:migrate": "npm run migrate --workspace=packages/database",
+    "prisma:studio": "npm run studio --workspace=packages/database",
+    "prisma:seed": "npm run seed --workspace=packages/database"
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0",
+    "@eslint/js": "^9.13.0",
+    "typescript-eslint": "^8.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "bcrypt@5.1.1": true,
+    "esbuild@0.28.2": true,
+    "esbuild@0.21.5": true,
+    "prisma@5.22.0": true
+  }
+}

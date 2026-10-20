@@ -1,0 +1,246 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+
+enum ProductCategory {
+  GIFTICON
+  FIGURE
+  ELECTRONICS
+  HIGH_END
+  ETC
+}
+
+enum GameType {
+  PINBALL
+  HORSE_RACE
+  QUIZ
+  SLOT
+  LADDER_CLIMB
+  ICHIBAN_KUJI
+  LADDER_LOTTERY
+  COIN_TOSS
+  ROULETTE
+  SURVIVE_PUZZLE
+  NUMBER_GUESS
+}
+
+enum GameStatus {
+  RECRUITING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CARD
+  BANK_TRANSFER
+  POINT
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PointsTransactionType {
+  EARNED
+  USED
+  REFUNDED
+  PURCHASED
+}
+
+enum ShipmentStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum SettlementStatus {
+  PENDING
+  TRANSFERRED
+  COMPLETED
+}
+
+// ---------- Models ----------
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  phone           String?  @unique
+  username        String
+  passwordHash    String
+  profileImageUrl String?
+  points          Decimal  @default(0) @db.Decimal(12, 2)
+  totalWins       Int      @default(0)
+  totalGames      Int      @default(0)
+  bankAccount     String?
+  isOrganizer     Boolean  @default(false)
+  kycVerified     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  organizedGames     Game[]              @relation("GameOrganizer")
+  wonGames           Game[]              @relation("GameWinner")
+  gameParticipations GameParticipant[]
+  pointsTransactions PointsTransaction[]
+  gameResults        GameResult[]
+  wonShipments       Shipment[]          @relation("ShipmentWinner")
+  organizedShipments Shipment[]          @relation("ShipmentOrganizer")
+  settlements        Settlement[]
+
+  @@map("users")
+}
+
+model Game {
+  id                  String          @id @default(uuid())
+  organizerId         String
+  organizer           User            @relation("GameOrganizer", fields: [organizerId], references: [id])
+  title               String
+  description         String
+  category            ProductCategory
+  productName         String
+  imageUrl            String?
+  gameType            GameType
+  participantLimit    Int
+  participantCount    Int             @default(0)
+  entryFee            Decimal         @db.Decimal(12, 2)
+  totalPool           Decimal         @default(0) @db.Decimal(12, 2)
+  recruitmentStartsAt DateTime
+  recruitmentEndsAt   DateTime
+  gameStartsAt        DateTime?
+  gameEndsAt          DateTime?
+  status              GameStatus      @default(RECRUITING)
+  resultHash          String?
+  seedRevealed        String?
+  isPracticeRound     Boolean         @default(false)
+  winnerId            String?
+  winner              User?           @relation("GameWinner", fields: [winnerId], references: [id])
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  participants       GameParticipant[]
+  pointsTransactions PointsTransaction[]
+  results            GameResult[]
+  shipments          Shipment[]
+  settlements        Settlement[]
+
+  @@index([organizerId])
+  @@index([status])
+  @@index([category])
+  @@index([gameType])
+  @@index([isPracticeRound])
+  @@index([recruitmentEndsAt])
+  @@map("games")
+}
+
+model GameParticipant {
+  id            String        @id @default(uuid())
+  gameId        String
+  game          Game          @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  entryFee      Decimal       @db.Decimal(12, 2)
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus @default(PENDING)
+  score         Decimal       @default(0) @db.Decimal(12, 2)
+  rank          Int?
+  isWinner      Boolean       @default(false)
+  joinedAt      DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([gameId, userId])
+  @@index([gameId])
+  @@index([userId])
+  @@index([paymentStatus])
+  @@map("game_participants")
+}
+
+model PointsTransaction {
+  id              String                @id @default(uuid())
+  userId          String
+  user            User                  @relation(fields: [userId], references: [id])
+  gameId          String?
+  game            Game?                 @relation(fields: [gameId], references: [id])
+  transactionType PointsTransactionType
+  points          Decimal               @db.Decimal(12, 2)
+  reason          String
+  createdAt       DateTime              @default(now())
+
+  @@index([userId])
+  @@index([gameId])
+  @@index([transactionType])
+  @@map("points_transactions")
+}
+
+model GameResult {
+  id           String   @id @default(uuid())
+  gameId       String
+  game         Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  rank         Int
+  score        Decimal  @db.Decimal(12, 2)
+  isWinner     Boolean  @default(false)
+  rewardAmount Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt    DateTime @default(now())
+
+  @@index([gameId])
+  @@index([userId])
+  @@map("game_results")
+}
+
+model Shipment {
+  id              String         @id @default(uuid())
+  gameId          String
+  game            Game           @relation(fields: [gameId], references: [id])
+  winnerId        String
+  winner          User           @relation("ShipmentWinner", fields: [winnerId], references: [id])
+  organizerId     String
+  organizer       User           @relation("ShipmentOrganizer", fields: [organizerId], references: [id])
+  courierCompany  String?
+  trackingNumber  String?
+  shippingAddress String
+  status          ShipmentStatus @default(PENDING)
+  lastCheckedAt   DateTime?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([gameId])
+  @@index([winnerId])
+  @@index([organizerId])
+  @@index([status])
+  @@map("shipments")
+}
+
+model Settlement {
+  id                String           @id @default(uuid())
+  gameId            String
+  game              Game             @relation(fields: [gameId], references: [id])
+  organizerId       String
+  organizer         User             @relation(fields: [organizerId], references: [id])
+  totalCollected    Decimal          @db.Decimal(12, 2)
+  platformFee       Decimal          @db.Decimal(12, 2)
+  organizerReceives Decimal          @db.Decimal(12, 2)
+  bankAccount       String
+  status            SettlementStatus @default(PENDING)
+  transferredAt     DateTime?
+  createdAt         DateTime         @default(now())
+
+  @@index([gameId])
+  @@index([organizerId])
+  @@index([status])
+  @@map("settlements")
+}
